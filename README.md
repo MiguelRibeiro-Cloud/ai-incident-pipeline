@@ -131,7 +131,7 @@ python -m pip install --upgrade pip
 python -m pip install -e './backend[dev]'
 docker compose up -d --wait
 cd backend
-alembic upgrade head
+python -m app.migrate
 alembic check
 ```
 
@@ -140,6 +140,25 @@ FastAPI, Celery, and Alembic all use the same typed settings layer. It resolves 
 `source` or export step. Real process environment variables take precedence over `.env`, which in
 turn takes precedence over safe local defaults. Credential-bearing settings are redacted from the
 settings representation. Vite configuration remains separate and only exposes `VITE_` variables.
+
+## Deployment commands
+
+Run migrations as a pre-deploy step from the backend application environment:
+
+```bash
+python -m app.migrate
+```
+
+Start the API with the platform-provided port:
+
+```bash
+python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+The application-owned migration module resolves `alembic.ini` from its own filesystem location and
+uses Alembic's Python API. It therefore does not depend on the Alembic console script being on
+`PATH`, the current working directory, virtual-environment activation tricks, or provider-specific
+filesystem paths. The shared settings layer continues to supply `DATABASE_URL`.
 
 The API permits only the configured browser origins. The development defaults are
 `http://localhost:5173` and `http://127.0.0.1:5173`; set the comma-separated `CORS_ORIGINS`
@@ -358,6 +377,7 @@ cd backend
 pytest
 ruff check .
 ruff format --check .
+python -m app.migrate
 alembic upgrade head
 alembic check
 ```
