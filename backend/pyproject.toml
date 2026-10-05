@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-incident-pipeline"
+version = "0.4.0"
+description = "Reliable distributed AI incident-processing pipeline"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "alembic>=1.14,<2",
+  "celery[redis]>=5.6,<5.7",
+  "fastapi>=0.115,<0.116",
+  "google-auth>=2,<3",
+  "google-genai>=1.0,<2",
+  "httpx>=0.28,<1",
+  "psycopg[binary]>=3.2,<4",
+  "pydantic>=2.12,<3",
+  "pydantic-settings>=2.7,<3",
+  "requests>=2.32,<3",
+  "sqlalchemy>=2.0,<3",
+  "uvicorn[standard]>=0.34,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3,<10",
+  "ruff>=0.11,<1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
