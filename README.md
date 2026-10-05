@@ -141,6 +141,18 @@ FastAPI, Celery, and Alembic all use the same typed settings layer. It resolves 
 turn takes precedence over safe local defaults. Credential-bearing settings are redacted from the
 settings representation. Vite configuration remains separate and only exposes `VITE_` variables.
 
+`backend/uv.lock` is the canonical reproducible backend dependency lock used by Railway/Railpack.
+It is generated from `backend/pyproject.toml` for Python 3.13 without replacing the existing local
+virtual-environment workflow. To reproduce the locked runtime environment directly with uv:
+
+```bash
+cd backend
+uv sync --locked --no-dev --python 3.13
+```
+
+When declared backend dependencies intentionally change, refresh the lock from `backend/` with
+`uv lock --python 3.13` and commit both files together.
+
 ## Deployment commands
 
 Run migrations as a pre-deploy step from the backend application environment:
