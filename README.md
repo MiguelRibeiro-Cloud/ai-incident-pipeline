@@ -141,6 +141,14 @@ FastAPI, Celery, and Alembic all use the same typed settings layer. It resolves 
 turn takes precedence over safe local defaults. Credential-bearing settings are redacted from the
 settings representation. Vite configuration remains separate and only exposes `VITE_` variables.
 
+`REDIS_URL` is the normal Redis configuration for both local and deployed environments. It defaults
+to `redis://localhost:6379`; the settings layer derives logical database 0 for the Celery broker and
+database 1 for the Celery result backend while preserving the URL's credentials, host, port, scheme,
+and query parameters. Set the platform-provided connection URL directly in deployment—for example,
+Railway can use `REDIS_URL=${{Redis.REDIS_URL}}`. `CELERY_BROKER_URL` and
+`CELERY_RESULT_BACKEND` remain optional independent overrides for advanced configurations and take
+precedence over their respective derived URLs.
+
 `backend/uv.lock` is the canonical reproducible backend dependency lock used by Railway/Railpack.
 It is generated from `backend/pyproject.toml` for Python 3.13 without replacing the existing local
 virtual-environment workflow. To reproduce the locked runtime environment directly with uv:
